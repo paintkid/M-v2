@@ -11,7 +11,7 @@ import SwiftUI
 struct MomentumApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MyRoomsView()
         }
     }
 }
