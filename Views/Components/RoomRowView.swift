@@ -1,3 +1,5 @@
+// Views/Components/RoomRowView.swift
+
 import SwiftUI
 
 struct RoomRowView: View {
@@ -10,11 +12,11 @@ struct RoomRowView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(room.name)
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.appTextPrimary)
+                        .foregroundColor(.appTextPrimary) // Changed
                     
                     Text("Last activity: \(room.lastActivity)")
                         .font(.system(size: 13))
-                        .foregroundColor(.appTextSecondary)
+                        .foregroundColor(.appTextSecondary) // Changed
                 }
                 
                 Spacer()
@@ -23,20 +25,20 @@ struct RoomRowView: View {
                     if room.hasNewActivity {
                         Circle()
                             .frame(width: 12, height: 12)
-                            .foregroundColor(.appPurple)
+                            .foregroundColor(.appPurple) // Changed
                     }
                     
                     HStack(spacing: 4) {
                         Image(systemName: "bolt.fill")
-                            .foregroundColor(.appPurple)
+                            .foregroundColor(.appPurple) // Changed
                         
                         Text("\(room.streak)")
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.appTextPrimary)
+                            .foregroundColor(.appTextPrimary) // Changed
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.appUIElementBackground)
+                    .background(Color.appUIElementBackground) // Changed
                     .cornerRadius(16)
                 }
             }
@@ -46,18 +48,18 @@ struct RoomRowView: View {
                 HStack {
                     Text("Day \(room.progress.current) of \(room.progress.total)")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.appTextPrimary)
+                        .foregroundColor(.appTextPrimary) // Changed
                     
                     Spacer()
                     
                     Text("\(Int(room.progressPercentage * 100))%")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.appTextSecondary)
+                        .foregroundColor(.appTextSecondary) // Changed
                 }
                 
                 ProgressView(value: room.progressPercentage, total: 1.0)
-                    .tint(.appPurple)
-                    .background(Color.appUIElementBackground)
+                    .tint(.appPurple) // Changed
+                    .background(Color.appUIElementBackground) // Changed
                     .scaleEffect(x: 1, y: 1.5, anchor: .center)
                     .clipShape(Capsule())
             }
@@ -65,7 +67,7 @@ struct RoomRowView: View {
             // MARK: - Members Footer
             HStack {
                 Image(systemName: "person.2.fill")
-                    .foregroundColor(.appTextTertiary)
+                    .foregroundColor(.appTextTertiary) // Changed
                 
                 HStack(spacing: -12) {
                     ForEach(0..<min(room.memberAvatarUrls.count, 4), id: \.self) { index in
@@ -73,35 +75,35 @@ struct RoomRowView: View {
                             .resizable()
                             .frame(width: 32, height: 32)
                             .aspectRatio(contentMode: .fit)
-                            .foregroundColor(.appTextTertiary)
-                            .background(Color.appSecondaryBackground)
+                            .foregroundColor(.appTextTertiary) // Changed
+                            .background(Color.appSecondaryBackground) // Changed
                             .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.appSecondaryBackground, lineWidth: 2))
+                            .overlay(Circle().stroke(Color.appSecondaryBackground, lineWidth: 2)) // Changed
                     }
                     
                     if room.memberAvatarUrls.count > 4 {
                         Text("+\(room.memberAvatarUrls.count - 4)")
                             .font(.system(size: 12, weight: .medium))
                             .frame(width: 32, height: 32)
-                            .background(Color.appUIElementBackground)
-                            .foregroundColor(.appTextPrimary)
+                            .background(Color.appUIElementBackground) // Changed
+                            .foregroundColor(.appTextPrimary) // Changed
                             .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.appSecondaryBackground, lineWidth: 2))
+                            .overlay(Circle().stroke(Color.appSecondaryBackground, lineWidth: 2)) // Changed
                     }
                 }
                 
                 Spacer()
                 
                 Image(systemName: "calendar")
-                    .foregroundColor(.appTextTertiary)
+                    .foregroundColor(.appTextTertiary) // Changed
             }
         }
         .padding()
-        .background(Color.appSecondaryBackground)
+        .background(Color.appSecondaryBackground) // Changed
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.appBorder, lineWidth: 1)
+                .stroke(Color.appBorder, lineWidth: 1) // Changed
         )
     }
 }
@@ -114,7 +116,7 @@ struct RoomRowView: View {
         }
         .padding()
     }
-    .background(Color.appBackground)
+    .background(Color.appBackground) // Changed
     .preferredColorScheme(.light)
 }
 
@@ -126,6 +128,6 @@ struct RoomRowView: View {
         }
         .padding()
     }
-    .background(Color.appBackground)
+    .background(Color.appBackground) // Changed
     .preferredColorScheme(.dark)
 }

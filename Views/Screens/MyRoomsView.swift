@@ -2,21 +2,21 @@ import SwiftUI
 
 struct MyRoomsView: View {
     @State private var rooms: [Room] = Room.mockData
-    
+
     var body: some View {
         ZStack {
-            Color.appBackground.ignoresSafeArea()
-            
+            Color.black.ignoresSafeArea()
+
             VStack(spacing: 0) {
                 // MARK: - Header
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text("My Rooms")
                             .font(.largeTitle).bold()
-                            .foregroundColor(.appTextPrimary)
-                        
+                            .foregroundColor(.white)
+
                         Spacer()
-                        
+
                         Button(action: {
                             print("Create room tapped")
                         }) {
@@ -24,18 +24,18 @@ struct MyRoomsView: View {
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
                                 .frame(width: 44, height: 44)
-                                .background(Color.appPurple)
+                                .background(Color.purple)
                                 .clipShape(Circle())
                         }
                     }
-                    
+
                     Text("Your active habit challenges")
                         .font(.subheadline)
-                        .foregroundColor(.appTextSecondary)
+                        .foregroundColor(Color(white: 0.6))
                 }
                 .padding()
-                .background(Color.appBackground)
-                
+                .background(Color.black)
+
                 // MARK: - Rooms List
                 ScrollView {
                     if rooms.isEmpty {
@@ -56,25 +56,25 @@ struct MyRoomsView: View {
             }
         }
     }
-    
+
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Image(systemName: "person.3.fill")
                 .font(.system(size: 40))
-                .foregroundColor(.appTextSecondary)
+                .foregroundColor(Color(white: 0.5))
                 .padding(24)
-                .background(Color.appUIElementBackground.clipShape(Circle()))
-            
+                .background(Color(white: 0.2).clipShape(Circle()))
+
             Text("No rooms yet")
                 .font(.title2).bold()
-                .foregroundColor(.appTextPrimary)
-            
+                .foregroundColor(.white)
+
             Text("Create your first room or join one to start building habits with friends.")
                 .font(.subheadline)
-                .foregroundColor(.appTextSecondary)
+                .foregroundColor(Color(white: 0.6))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
-            
+
             Button(action: {
                 print("Create Your First Room tapped")
             }) {
@@ -83,7 +83,7 @@ struct MyRoomsView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 16)
-                    .background(Color.appPurple)
+                    .background(Color.purple)
                     .clipShape(Capsule())
             }
             .padding(.top)
@@ -92,12 +92,6 @@ struct MyRoomsView: View {
     }
 }
 
-#Preview("Light") {
+#Preview {
     MyRoomsView()
-        .preferredColorScheme(.light)
-}
-
-#Preview("Dark") {
-    MyRoomsView()
-        .preferredColorScheme(.dark)
 }
