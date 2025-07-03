@@ -1,6 +1,5 @@
 import Foundation
 
-/// Represents a user's completed journey or success story in a habit room.
 struct Journey: Identifiable {
     let id: String
     let user: User
@@ -8,26 +7,23 @@ struct Journey: Identifiable {
     let beforePhotoURL: String
     let afterPhotoURL: String
     let summary: String
-    let encouragement: Encouragement
+    var encouragement: Encouragement // Changed to var
     let daysAgo: Int
     
-    /// A nested struct representing the user who completed the journey.
     struct User {
         let name: String
         let avatarURL: String
     }
     
-    /// A nested struct for tracking encouragement stats on a post.
     struct Encouragement {
         let users: [String]
-        let totalCount: Int
+        var totalCount: Int // Changed to var
     }
 }
 
 // MARK: - Mock Data
 extension Journey {
-    /// Provides static mock data for previews and initial development.
-    static let mockData: [Journey] = [
+    static var mockData: [Journey] = [ // Changed to var to allow modification in previews/tests
         .init(
             id: "1",
             user: .init(name: "Sarah Chen", avatarURL: "placeholder_avatar"),
