@@ -2,30 +2,30 @@
 
 import SwiftUI
 
-/// A screen that displays a feed of success stories from the community.
 struct DiscoveryFeedView: View {
     
     // MARK: - Properties
     
-    /// The source of truth for the journeys displayed in the feed.
-    @State private var journeys: [Journey] = Journey.mockData
+    @StateObject private var viewModel = DiscoveryFeedViewModel()
     
     // MARK: - Body
     
     var body: some View {
         ZStack {
-            // MARK: - Background
             Color.appBackground.ignoresSafeArea()
             
-            // MARK: - Main Content
             VStack(spacing: 0) {
-
                 header
                 
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(journeys) { journey in
-                            JourneyCardView(journey: journey)
+                        ForEach(viewModel.journeys) { journey in
+                            JourneyCardView(
+                                journey: journey,
+                                isApplauded: viewModel.applaudedJourneyIDs.contains(journey.id)
+                            ) {
+                                viewModel.toggleApplaud(for: journey.id)
+                            }
                         }
                     }
                     .padding(.horizontal)
@@ -37,7 +37,6 @@ struct DiscoveryFeedView: View {
     
     // MARK: - Private Views
     
-    /// The custom header view for the Discovery screen.
     private var header: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Discovery")
@@ -50,17 +49,11 @@ struct DiscoveryFeedView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color.appBackground) // Ensures header scrolls over a solid color.
+        .background(Color.appBackground)
     }
 }
 
 // MARK: - Previews
-#Preview("Light Mode") {
+#Preview {
     DiscoveryFeedView()
-        .preferredColorScheme(.light)
-}
-
-#Preview("Dark Mode") {
-    DiscoveryFeedView()
-        .preferredColorScheme(.dark)
 }
