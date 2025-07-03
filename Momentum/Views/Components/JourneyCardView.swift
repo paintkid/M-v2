@@ -1,5 +1,3 @@
-// Views/Components/JourneyCardView.swift
-
 import SwiftUI
 
 struct JourneyCardView: View {
@@ -76,8 +74,10 @@ struct JourneyCardView: View {
             Divider().background(Color.appBorder)
             
             HStack {
-                Text("Encouraged by **\(journey.encouragement.users.first ?? "Someone")** and **\(journey.encouragement.totalCount - 1) others**")
-                    .font(.system(size: 13)).foregroundColor(.appTextSecondary)
+                // The view now uses our smart computed property.
+                encouragementText
+                    .font(.system(size: 13))
+                    .foregroundColor(.appTextSecondary)
                 
                 Spacer()
                 
@@ -91,6 +91,26 @@ struct JourneyCardView: View {
                 }
             }
             .padding()
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    /// A computed property that intelligently formats the encouragement text.
+    private var encouragementText: Text {
+        let count = journey.encouragement.totalCount
+        
+        if count == 0 {
+            return Text("Be the first to send encouragement")
+        }
+        
+        // This is a simplified logic. A real app might show "You and X others".
+        let firstUser = journey.encouragement.users.first ?? "Someone"
+        
+        if count == 1 {
+            return Text("Encouraged by **\(firstUser)**")
+        } else {
+            return Text("Encouraged by **\(firstUser)** and **\(count - 1) others**")
         }
     }
 }

@@ -1,14 +1,11 @@
 import Foundation
 
-/// Manages the state and logic for the DiscoveryFeed screen.
 @MainActor
 class DiscoveryFeedViewModel: ObservableObject {
     
     // MARK: - Properties
     
     @Published private(set) var journeys: [Journey] = []
-    
-    /// A set to keep track of which journeys the user has applauded in the current session.
     @Published private(set) var applaudedJourneyIDs = Set<String>()
     
     // MARK: - Init
@@ -19,14 +16,21 @@ class DiscoveryFeedViewModel: ObservableObject {
     
     // MARK: - Public Methods
     
-    /// Toggles the applauded state for a given journey.
     func toggleApplaud(for journeyId: String) {
+        // Find the index of the journey to modify.
+        guard let index = journeys.firstIndex(where: { $0.id == journeyId }) else {
+            print("Error: Journey with ID \(journeyId) not found.")
+            return
+        }
+        
         if applaudedJourneyIDs.contains(journeyId) {
             applaudedJourneyIDs.remove(journeyId)
+            journeys[index].encouragement.totalCount -= 1
             print("Removed applaud for journey: \(journeyId)")
             // TODO: Send network request to server to remove applaud.
         } else {
             applaudedJourneyIDs.insert(journeyId)
+            journeys[index].encouragement.totalCount += 1
             print("Applauded journey: \(journeyId)")
             // TODO: Send network request to server to add applaud.
         }
@@ -35,7 +39,7 @@ class DiscoveryFeedViewModel: ObservableObject {
     // MARK: - Private Methods
     
     private func loadJourneys() {
-        // TODO: Replace with a network call to fetch discovery feed journeys.
+        // TODO: Replace mock data with a network call to fetch discovery feed journeys.
         self.journeys = Journey.mockData
     }
 }
