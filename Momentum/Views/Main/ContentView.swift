@@ -1,28 +1,28 @@
-// Views/Main/ContentView.swift
-
 import SwiftUI
 
 struct ContentView: View {
     
     // MARK: - Properties
     
-    @StateObject private var sessionManager = SessionManager()
+    /// ContentView now receives the single SessionManager instance from the environment.
+    @EnvironmentObject private var sessionManager: SessionManager
     
     // MARK: - Body
     
     var body: some View {
-        ZStack {
-            if sessionManager.currentUser != nil {
-                AppTabView()
-            } else {
-                WelcomeView()
-            }
+        // This logic is now much simpler and more reliable.
+        // We directly check the state of the environment object.
+        if sessionManager.currentUser != nil {
+            AppTabView()
+        } else {
+            WelcomeView()
         }
-        .environmentObject(sessionManager)
     }
 }
 
 // MARK: - Previews
 #Preview {
+    // For the preview to work, we must provide a sample SessionManager.
     ContentView()
+        .environmentObject(SessionManager())
 }

@@ -36,13 +36,16 @@ final class SessionManager: ObservableObject {
     
     private func addAuthStateListener() {
         authStateHandler = Auth.auth().addStateDidChangeListener { [weak self] _, firebaseUser in
-            if let firebaseUser = firebaseUser {
-                // This uses the new, explicit initializer from the User model.
-                self?.currentUser = User(from: firebaseUser)
-                print("SessionManager: User is signed in with UID: \(firebaseUser.uid)")
-            } else {
-                self?.currentUser = nil
-                print("SessionManager: User is signed out.")
+            // This closure can be called on a background thread.
+            // We must dispatch any UI-related updates to the main thread.
+            DispatchQueue.main.async {
+                if let firebaseUser = firebaseUser {
+                    self?.currentUser = User(from: firebaseUser)
+                    print("SessionManager: User is signed in on main thread with UID: \(firebaseUser.uid)")
+                } else {
+                    self?.currentUser = nil
+                    print("SessionManager: User is signed out on main thread.")
+                }
             }
         }
     }
