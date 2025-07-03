@@ -1,103 +1,77 @@
 import SwiftUI
 
 struct MyRoomsView: View {
-    @State private var rooms: [Room] = Room.mockData
+    
+    // MARK: - Properties
+    
+    @StateObject private var viewModel = MyRoomsViewModel()
+    
+    // MARK: - Body
     
     var body: some View {
-        ZStack {
-            Color.appBackground.ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // MARK: - Header
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text("My Rooms")
-                            .font(.largeTitle).bold()
-                            .foregroundColor(.appTextPrimary)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            print("Create room tapped")
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 44, height: 44)
-                                .background(Color.appPurple)
-                                .clipShape(Circle())
-                        }
-                    }
-                    
-                    Text("Your active habit challenges")
-                        .font(.subheadline)
-                        .foregroundColor(.appTextSecondary)
-                }
-                .padding()
-                .background(Color.appBackground)
+        NavigationStack {
+            ZStack {
+                Color.appBackground.ignoresSafeArea()
                 
-                // MARK: - Rooms List
-                ScrollView {
-                    if rooms.isEmpty {
-                        emptyStateView
-                    } else {
-                        LazyVStack(spacing: 12) {
-                            ForEach(rooms) { room in
-                                RoomRowView(room: room)
-                                    .onTapGesture {
-                                        print("Tapped on room: \(room.name)")
+                VStack(spacing: 0) {
+                    header
+                    
+                    ScrollView {
+                        if viewModel.rooms.isEmpty {
+                            // TODO: Build a proper empty state view.
+                            Text("Empty State Placeholder")
+                        } else {
+                            LazyVStack(spacing: 12) {
+                                ForEach(viewModel.rooms) { room in
+                                    NavigationLink(destination: RoomDashboardView(room: room)) {
+                                        RoomRowView(room: room)
                                     }
+                                }
                             }
+                            .padding(.horizontal)
+                            .padding(.top)
                         }
-                        .padding(.horizontal)
-                        .padding(.top)
                     }
                 }
             }
         }
     }
     
-    private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "person.3.fill")
-                .font(.system(size: 40))
-                .foregroundColor(.appTextSecondary)
-                .padding(24)
-                .background(Color.appUIElementBackground.clipShape(Circle()))
+    // MARK: - Private Views
+    
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("My Rooms")
+                    .font(.largeTitle).bold()
+                    .foregroundColor(.appTextPrimary)
+                
+                Spacer()
+                
+                Button(action: {
+                    // TODO: Present CreateRoomView modally.
+                    print("Create room tapped")
+                }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                        .background(Color.appPurple)
+                        .clipShape(Circle())
+                }
+            }
             
-            Text("No rooms yet")
-                .font(.title2).bold()
-                .foregroundColor(.appTextPrimary)
-            
-            Text("Create your first room or join one to start building habits with friends.")
+            Text("Your active habit challenges")
                 .font(.subheadline)
                 .foregroundColor(.appTextSecondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            
-            Button(action: {
-                print("Create Your First Room tapped")
-            }) {
-                Text("Create Your First Room")
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 16)
-                    .background(Color.appPurple)
-                    .clipShape(Capsule())
-            }
-            .padding(.top)
         }
-        .padding(.top, 80)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color.appBackground)
     }
 }
 
-#Preview("Light") {
+// MARK: - Previews
+#Preview {
     MyRoomsView()
-        .preferredColorScheme(.light)
-}
-
-#Preview("Dark") {
-    MyRoomsView()
-        .preferredColorScheme(.dark)
 }
