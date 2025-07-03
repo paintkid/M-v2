@@ -1,6 +1,5 @@
 import Foundation
 
-/// Manages the state and logic for user authentication screens (Login, Sign Up).
 @MainActor
 final class AuthenticationViewModel: ObservableObject {
     
@@ -17,16 +16,14 @@ final class AuthenticationViewModel: ObservableObject {
     
     // MARK: - Computed Properties
     
-    /// A computed property to determine if the sign-up form is valid.
     var isSignUpFormValid: Bool {
         !name.isEmpty &&
-        !email.isEmpty && // TODO: Add proper email validation.
+        !email.isEmpty &&
         !password.isEmpty &&
         password == confirmPassword &&
         acceptsTerms
     }
     
-    /// A computed property to determine if the login form is valid.
     var isLoginFormValid: Bool {
         !email.isEmpty && !password.isEmpty
     }
@@ -57,12 +54,20 @@ final class AuthenticationViewModel: ObservableObject {
         
         do {
             let authResult = try await AuthenticationService.shared.signUp(withEmail: email, password: password)
-            print("Sign up successful for user: \(authResult.user.uid)")
-            // TODO: After sign-up, create a corresponding user document in Firestore with the `name` property.
+            
+            let newUser = User(
+                uid: authResult.user.uid,
+                email: authResult.user.email,
+                name: self.name
+            )
+            try await FirestoreService.shared.createUserDocument(user: newUser)
+            
+            print("Sign up and user document creation successful.")
             return true
         } catch {
             self.error = error.localizedDescription
-            print("Error signing up: \(error.localizedDescription)")
+            print("Error during sign up process: \(error.localizedDescription)")
+            // TODO: Implement logic to delete the created auth user if the firestore write fails.
             return false
         }
     }
@@ -73,7 +78,6 @@ final class AuthenticationViewModel: ObservableObject {
         
         do {
             try await AuthenticationService.shared.sendPasswordReset(to: email)
-            // TODO: Show a confirmation message to the user.
         } catch {
             self.error = error.localizedDescription
             print("Error sending password reset: \(error.localizedDescription)")
