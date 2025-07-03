@@ -1,3 +1,5 @@
+// Services/FirestoreService.swift
+
 import Foundation
 import FirebaseFirestore
 
@@ -20,7 +22,8 @@ final class FirestoreService {
     /// - Throws: An error if the document fails to write.
     func createUserDocument(user: User) async throws {
         let userRef = db.collection("users").document(user.uid)
-        try await userRef.setData(from: user)
+        // FIX: Removed `await` as this specific method overload is not async.
+        try userRef.setData(from: user)
         print("Successfully created user document for UID: \(user.uid)")
     }
 }
