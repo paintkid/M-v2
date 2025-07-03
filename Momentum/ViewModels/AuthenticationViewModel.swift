@@ -6,17 +6,35 @@ final class AuthenticationViewModel: ObservableObject {
     
     // MARK: - Published Properties
     
+    @Published var name = ""
     @Published var email = ""
     @Published var password = ""
     @Published var confirmPassword = ""
+    @Published var acceptsTerms = false
     
     @Published var error: String?
     @Published var isLoading = false
     
+    // MARK: - Computed Properties
+    
+    /// A computed property to determine if the sign-up form is valid.
+    var isSignUpFormValid: Bool {
+        !name.isEmpty &&
+        !email.isEmpty && // TODO: Add proper email validation.
+        !password.isEmpty &&
+        password == confirmPassword &&
+        acceptsTerms
+    }
+    
+    /// A computed property to determine if the login form is valid.
+    var isLoginFormValid: Bool {
+        !email.isEmpty && !password.isEmpty
+    }
+    
     // MARK: - Public Methods
     
     func signIn() async -> Bool {
-        // TODO: Implement form validation before attempting sign-in.
+        guard isLoginFormValid else { return false }
         
         isLoading = true
         defer { isLoading = false }
@@ -32,14 +50,15 @@ final class AuthenticationViewModel: ObservableObject {
     }
     
     func signUp() async -> Bool {
-        // TODO: Implement form validation, including password matching.
+        guard isSignUpFormValid else { return false }
         
         isLoading = true
         defer { isLoading = false }
         
         do {
-            try await AuthenticationService.shared.signUp(withEmail: email, password: password)
-            // TODO: After sign-up, create a corresponding user document in Firestore.
+            let authResult = try await AuthenticationService.shared.signUp(withEmail: email, password: password)
+            print("Sign up successful for user: \(authResult.user.uid)")
+            // TODO: After sign-up, create a corresponding user document in Firestore with the `name` property.
             return true
         } catch {
             self.error = error.localizedDescription
