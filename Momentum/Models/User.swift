@@ -22,8 +22,17 @@ struct User: Identifiable, Codable {
     init(from authUser: FirebaseAuth.User) {
         self.uid = authUser.uid
         self.email = authUser.email
-        self.name = authUser.displayName ?? "" // Default to empty string if no display name
+        self.name = authUser.displayName ?? ""
         self.avatarURL = authUser.photoURL?.absoluteString
+    }
+    
+    /// A custom initializer to create a new User object after sign-up.
+    /// This is used by the AuthenticationViewModel.
+    init(uid: String, email: String?, name: String) {
+        self.uid = uid
+        self.email = email
+        self.name = name
+        self.avatarURL = nil // A new user won't have an avatar URL yet.
     }
     
     // MARK: - Coding Keys
