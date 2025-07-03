@@ -1,20 +1,27 @@
+// Models/User.swift
+
 import Foundation
+import FirebaseFirestore
 import FirebaseAuth
 
-/// Represents a basic authenticated user provided by Firebase.
-struct User {
+/// Represents a user profile stored in Firestore.
+struct User: Identifiable, Codable {
+    
+    // MARK: - Properties
+    
+    @DocumentID var id: String?
     let uid: String
     let email: String?
+    var name: String
+    var avatarURL: String?
     
-    /// Initializes a `User` from a Firebase `AuthDataResult` object.
-    init(from authResult: AuthDataResult) {
-        self.uid = authResult.user.uid
-        self.email = authResult.user.email
-    }
+    // MARK: - Coding Keys
     
-    /// Initializes a `User` from a Firebase `User` object.
-    init(from firebaseUser: FirebaseAuth.User) {
-        self.uid = firebaseUser.uid
-        self.email = firebaseUser.email
+    enum CodingKeys: String, CodingKey {
+        case id
+        case uid
+        case email
+        case name
+        case avatarURL = "avatar_url" // Maps Swift property to Firestore field name
     }
 }
