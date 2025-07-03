@@ -15,6 +15,17 @@ struct User: Identifiable, Codable {
     var name: String
     var avatarURL: String?
     
+    // MARK: - Init
+    
+    /// A custom initializer to create a User from a Firebase Auth user object.
+    /// This is used by the SessionManager when the auth state changes.
+    init(from authUser: FirebaseAuth.User) {
+        self.uid = authUser.uid
+        self.email = authUser.email
+        self.name = authUser.displayName ?? "" // Default to empty string if no display name
+        self.avatarURL = authUser.photoURL?.absoluteString
+    }
+    
     // MARK: - Coding Keys
     
     enum CodingKeys: String, CodingKey {
@@ -22,6 +33,6 @@ struct User: Identifiable, Codable {
         case uid
         case email
         case name
-        case avatarURL = "avatar_url" // Maps Swift property to Firestore field name
+        case avatarURL = "avatar_url"
     }
 }
