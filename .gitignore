@@ -1,0 +1,58 @@
+### Swift ###
+# Xcode
+#
+# gitignore contributors: remember to keep this file platform-agnostic
+# gitignore test builds, just add a line like `build/` to your .gitignore
+
+## User-specific configurations
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.playground/xcuserdata/
+
+## Build generated
+build/
+DerivedData/
+
+## Various settings
+*.moved-aside
+*.xccheckout
+*.xcscheme
+
+## Obj-C/Swift specific
+*.hmap
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+#
+# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
+# *.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+#
+# It is recommended to not ignore this file, as it contains dependency versions and is needed for CI/CD systems.
+#
+.build/
+Packages/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# Carthage/Checkouts
+Carthage/Build
+
+# Accidental folders
+#
+# We all have our moments.
+*~
+
+# End of https://www.toptal.com/developers/gitignore/api/swift
+
+# Custom Rules for Momentum Project
+
+# macOS files
+.DS_Store
+
+# Firebase configuration - THIS IS THE CRUCIAL LINE
+GoogleService-Info.plist
