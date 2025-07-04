@@ -1,5 +1,3 @@
-// Models/User.swift
-
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
@@ -13,7 +11,18 @@ struct User: Identifiable, Codable {
     let uid: String
     let email: String?
     var name: String
+    var username: String
+    var bio: String
     var avatarURL: String?
+    var stats: Stats
+    
+    // MARK: - Nested Types
+    
+    struct Stats: Codable {
+        var roomsCompleted: Int
+        var totalDays: Int
+        var currentStreak: Int
+    }
     
     // MARK: - Init
     
@@ -23,7 +32,10 @@ struct User: Identifiable, Codable {
         self.uid = authUser.uid
         self.email = authUser.email
         self.name = authUser.displayName ?? ""
+        self.username = "@\(authUser.displayName?.lowercased().filter { !$0.isWhitespace } ?? "newuser")"
+        self.bio = ""
         self.avatarURL = authUser.photoURL?.absoluteString
+        self.stats = Stats(roomsCompleted: 0, totalDays: 0, currentStreak: 0)
     }
     
     /// A custom initializer to create a new User object after sign-up.
@@ -32,7 +44,10 @@ struct User: Identifiable, Codable {
         self.uid = uid
         self.email = email
         self.name = name
-        self.avatarURL = nil // A new user won't have an avatar URL yet.
+        self.username = "@\(name.lowercased().filter { !$0.isWhitespace })"
+        self.bio = ""
+        self.avatarURL = nil
+        self.stats = Stats(roomsCompleted: 0, totalDays: 0, currentStreak: 0)
     }
     
     // MARK: - Coding Keys
@@ -42,6 +57,18 @@ struct User: Identifiable, Codable {
         case uid
         case email
         case name
+        case username
+        case bio
         case avatarURL = "avatar_url"
+        case stats
     }
+}
+
+// MARK: - Mock Data
+extension User {
+    static let mock = User(
+        uid: "mock_user_123",
+        email: "alexj@example.com",
+        name: "Alex Johnson"
+    )
 }

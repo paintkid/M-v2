@@ -1,5 +1,3 @@
-// Services/SessionManager.swift
-
 import Foundation
 import FirebaseAuth
 import Combine
@@ -36,10 +34,9 @@ final class SessionManager: ObservableObject {
     
     private func addAuthStateListener() {
         authStateHandler = Auth.auth().addStateDidChangeListener { [weak self] _, firebaseUser in
-            // This closure can be called on a background thread.
-            // We must dispatch any UI-related updates to the main thread.
             DispatchQueue.main.async {
                 if let firebaseUser = firebaseUser {
+                    // This now uses the correct, explicit initializer from the User model.
                     self?.currentUser = User(from: firebaseUser)
                     print("SessionManager: User is signed in on main thread with UID: \(firebaseUser.uid)")
                 } else {
