@@ -60,7 +60,9 @@ final class AuthenticationViewModel: ObservableObject {
                 email: authResult.user.email,
                 name: self.name
             )
-            try await FirestoreService.shared.createUserDocument(user: newUser)
+            
+            // Corrected: Removed the unnecessary `await` keyword.
+            try FirestoreService.shared.createUserDocument(user: newUser)
             
             print("Sign up and user document creation successful.")
             return true
