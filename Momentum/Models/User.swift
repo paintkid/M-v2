@@ -26,13 +26,24 @@ struct User: Identifiable, Codable {
     
     // MARK: - Init
     
+    /// A custom initializer to create a User from a Firebase Auth user object.
+    /// This is used by the SessionManager when the auth state changes.
+    init(from authUser: FirebaseAuth.User) {
+        self.uid = authUser.uid
+        self.email = authUser.email
+        self.name = authUser.displayName ?? ""
+        self.username = "@\(authUser.displayName?.lowercased().filter { !$0.isWhitespace } ?? "newuser")"
+        self.bio = ""
+        self.avatarURL = authUser.photoURL?.absoluteString
+        self.stats = Stats(roomsCompleted: 0, totalDays: 0, currentStreak: 0)
+    }
+    
     /// A custom initializer to create a new User object after sign-up.
+    /// This is used by the AuthenticationViewModel.
     init(uid: String, email: String?, name: String) {
         self.uid = uid
         self.email = email
         self.name = name
-        
-        // Default values for a new user
         self.username = "@\(name.lowercased().filter { !$0.isWhitespace })"
         self.bio = ""
         self.avatarURL = nil
