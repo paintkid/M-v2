@@ -21,6 +21,7 @@ struct SettingRowView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.title)
                     .font(.subheadline)
+                    .fontWeight(item.isDestructive ? .semibold : .regular)
                     .foregroundColor(item.isDestructive ? .red : .appTextPrimary)
                 
                 if let subtitle = item.subtitle {
@@ -43,7 +44,6 @@ struct SettingRowView: View {
 }
 
 /// A model representing a single item in a settings list.
-/// Using a model like this makes the `SettingsView` much cleaner and easier to manage.
 struct SettingItem: Identifiable {
     let id = UUID()
     let iconName: String

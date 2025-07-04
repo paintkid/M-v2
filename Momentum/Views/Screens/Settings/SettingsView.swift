@@ -71,6 +71,10 @@ struct SettingsView: View {
     
     private var appPreferencesSection: some View {
         Section(header: Text("App Preferences")) {
+            Toggle(isOn: $viewModel.isDarkMode) {
+                SettingRowView(item: .init(iconName: "moon.fill", title: "Dark Mode", showsChevron: false))
+            }
+            
             ForEach(viewModel.appPreferenceItems) { item in
                 SettingRowView(item: item)
             }
