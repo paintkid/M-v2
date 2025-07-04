@@ -1,0 +1,25 @@
+import Foundation
+
+/// Manages the state and logic for the user's detailed profile screen.
+@MainActor
+final class ProfileViewModel: ObservableObject {
+    
+    // MARK: - Published Properties
+    
+    @Published private(set) var user: User?
+    @Published private(set) var accomplishments: [Accomplishment] = []
+    
+    // MARK: - Init
+    
+    init(user: User?) {
+        self.user = user
+        loadAccomplishments()
+    }
+    
+    // MARK: - Private Methods
+    
+    private func loadAccomplishments() {
+        // TODO: Fetch user's accomplishments from Firestore.
+        self.accomplishments = Accomplishment.mockData
+    }
+}
