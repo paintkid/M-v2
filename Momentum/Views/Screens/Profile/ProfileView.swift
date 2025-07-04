@@ -1,18 +1,13 @@
-// Views/Screens/Profile/ProfileView.swift
-
 import SwiftUI
 
 struct ProfileView: View {
     
     // MARK: - Properties
     
-    @StateObject private var viewModel: ProfileViewModel
+    @EnvironmentObject private var sessionManager: SessionManager
     
-    // MARK: - Init
-    
-    init(user: User?) {
-        _viewModel = StateObject(wrappedValue: ProfileViewModel(user: user))
-    }
+    /// The ViewModel is now a StateObject, created by the parent view.
+    @StateObject var viewModel: ProfileViewModel
     
     // MARK: - Body
     
@@ -21,18 +16,17 @@ struct ProfileView: View {
             ZStack {
                 Color.appBackground.ignoresSafeArea()
                 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        if let user = viewModel.user {
+                if let user = viewModel.user {
+                    ScrollView {
+                        VStack(spacing: 24) {
                             profileHeader(for: user)
-                            
                             statsSection(for: user.stats)
-                            
                             accomplishmentsSection
-                        } else {
-                            ProgressView()
                         }
                     }
+                } else {
+                    // This will show if the user data is somehow nil.
+                    ProgressView()
                 }
             }
             .toolbar { navigationToolbar }
@@ -62,7 +56,6 @@ struct ProfileView: View {
                         .foregroundColor(.appTextSecondary)
                         .padding(.top, 4)
                 }
-                // This ensures the text content aligns to the left.
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             
@@ -124,7 +117,9 @@ struct ProfileView: View {
         
         ToolbarItem(placement: .navigationBarTrailing) {
             // TODO: Replace with NavigationLink to SettingsView
-            Button(action: {}) {
+            Button(action: {
+                viewModel.signOut(sessionManager: sessionManager)
+            }) {
                 Image(systemName: "gearshape.fill")
                     .foregroundColor(.appTextSecondary)
             }
@@ -134,12 +129,7 @@ struct ProfileView: View {
 
 // MARK: - Previews
 #Preview {
-    let mockUser = User(
-        uid: "123",
-        email: "preview@example.com",
-        name: "Alex Johnson"
-    )
-    
-    return ProfileView(user: mockUser)
+
+    ProfileView(viewModel: ProfileViewModel(user: User.mock))
         .environmentObject(SessionManager())
 }

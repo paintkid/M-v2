@@ -2,6 +2,10 @@ import SwiftUI
 
 struct AppTabView: View {
     
+    // MARK: - Properties
+    
+    @EnvironmentObject private var sessionManager: SessionManager
+    
     // MARK: - Body
     
     var body: some View {
@@ -21,13 +25,11 @@ struct AppTabView: View {
                     Label("Notifications", systemImage: "bell.fill")
                 }
             
-            // TODO: Create the ProfileView and add it here.
-            Text("Profile Screen")
+            ProfileView(viewModel: ProfileViewModel(user: sessionManager.currentUser))
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
         }
-        // TODO: Customize the tab bar appearance to match theme.
         .tint(.appPurple)
     }
 }
@@ -35,4 +37,5 @@ struct AppTabView: View {
 // MARK: - Previews
 #Preview {
     AppTabView()
+        .environmentObject(SessionManager())
 }
