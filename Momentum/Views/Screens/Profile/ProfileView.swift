@@ -4,10 +4,8 @@ struct ProfileView: View {
     
     // MARK: - Properties
     
-    @EnvironmentObject private var sessionManager: SessionManager
-    
-    /// The ViewModel is now a StateObject, created by the parent view.
     @StateObject var viewModel: ProfileViewModel
+    @State private var showSettings = false // State to control the presentation of the Settings sheet.
     
     // MARK: - Body
     
@@ -25,11 +23,14 @@ struct ProfileView: View {
                         }
                     }
                 } else {
-                    // This will show if the user data is somehow nil.
                     ProgressView()
                 }
             }
             .toolbar { navigationToolbar }
+            // The .sheet modifier presents the SettingsView when showSettings is true.
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+            }
         }
     }
     
@@ -116,9 +117,9 @@ struct ProfileView: View {
         }
         
         ToolbarItem(placement: .navigationBarTrailing) {
-            // TODO: Replace with NavigationLink to SettingsView
+            // This button now toggles the state variable to show the sheet.
             Button(action: {
-                viewModel.signOut(sessionManager: sessionManager)
+                showSettings.toggle()
             }) {
                 Image(systemName: "gearshape.fill")
                     .foregroundColor(.appTextSecondary)
@@ -129,7 +130,6 @@ struct ProfileView: View {
 
 // MARK: - Previews
 #Preview {
-
     ProfileView(viewModel: ProfileViewModel(user: User.mock))
         .environmentObject(SessionManager())
 }
