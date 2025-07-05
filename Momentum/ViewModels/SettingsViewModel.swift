@@ -14,9 +14,9 @@ final class SettingsViewModel: ObservableObject {
     
     // MARK: - Section Data
     
+    /// The account section now focuses on core account security.
     let accountItems: [SettingItem] = [
-        .init(iconName: "person.fill", title: "Edit Profile", subtitle: "Update your name, bio, and photo"),
-        .init(iconName: "camera.fill", title: "Profile Photo", subtitle: "Change your profile picture"),
+        .init(iconName: "envelope.fill", title: "Update Email", subtitle: "Change your account email address"),
         .init(iconName: "lock.fill", title: "Change Password", subtitle: "Update your account password")
     ]
     
@@ -24,7 +24,6 @@ final class SettingsViewModel: ObservableObject {
         .init(iconName: "globe", title: "Language", subtitle: "English")
     ]
     
-    // Updated: Removed Help Center and Contact Support for a later version
     let supportItems: [SettingItem] = [
         .init(iconName: "star.fill", title: "Rate Momentum")
     ]

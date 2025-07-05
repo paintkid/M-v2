@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct SettingsView: View {
@@ -7,31 +6,27 @@ struct SettingsView: View {
     
     @StateObject private var viewModel = SettingsViewModel()
     @EnvironmentObject private var sessionManager: SessionManager
-    @Environment(\.dismiss) private var dismiss
     
     // MARK: - Body
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.appBackground.ignoresSafeArea()
-                
-                List {
-                    accountSection
-                    privacySection
-                    notificationsSection
-                    appPreferencesSection
-                    supportSection
-                    signOutSection
-                }
-                .listStyle(.insetGrouped)
-                .background(Color.appBackground)
-                .scrollContentBackground(.hidden)
+        ZStack {
+            Color.appBackground.ignoresSafeArea()
+            
+            List {
+                accountSection
+                privacySection
+                notificationsSection
+                appPreferencesSection
+                supportSection
+                signOutSection
             }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { navigationToolbar }
+            .listStyle(.insetGrouped)
+            .background(Color.appBackground)
+            .scrollContentBackground(.hidden)
         }
+        .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     // MARK: - Private Views
@@ -94,39 +89,11 @@ struct SettingsView: View {
     }
     
     private var signOutSection: some View {
-        // Corrected: The footer is now attached directly to the last section.
         Section {
             Button(action: {
                 viewModel.signOut(sessionManager: sessionManager)
             }) {
                 SettingRowView(item: .init(iconName: "rectangle.portrait.and.arrow.right", title: "Sign Out", showsChevron: false, isDestructive: true))
-            }
-        } footer: {
-            appInfoFooter
-        }
-    }
-    
-    // Corrected: The footer is now a simple ViewBuilder that doesn't need special modifiers.
-    @ViewBuilder
-    private var appInfoFooter: some View {
-        VStack {
-            Text("Momentum")
-                .font(.subheadline)
-                .foregroundColor(.appTextSecondary)
-            Text("Version 1.0.0")
-                .font(.caption)
-                .foregroundColor(.appTextTertiary)
-        }
-        .frame(maxWidth: .infinity, alignment: .center)
-        .padding(.top, 20)
-    }
-    
-    @ToolbarContentBuilder
-    private var navigationToolbar: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button(action: { dismiss() }) {
-                Image(systemName: "xmark")
-                    .foregroundColor(.appTextPrimary)
             }
         }
     }
@@ -134,6 +101,8 @@ struct SettingsView: View {
 
 // MARK: - Previews
 #Preview {
-    SettingsView()
-        .environmentObject(SessionManager())
+    NavigationStack {
+        SettingsView()
+            .environmentObject(SessionManager())
+    }
 }
