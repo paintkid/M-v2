@@ -11,10 +11,13 @@ struct User: Identifiable, Codable {
     let uid: String
     let email: String?
     var name: String
-    var username: String
+    var username: String?
     var bio: String
     var avatarURL: String?
-    var stats: Stats
+    
+    // Corrected: The stats property is now optional to handle cases where
+    // it might not exist in older Firestore documents, preventing crashes.
+    var stats: Stats?
     
     // MARK: - Nested Types
     
@@ -24,51 +27,47 @@ struct User: Identifiable, Codable {
         var currentStreak: Int
     }
     
-    // MARK: - Init
+    // MARK: - Initializers
     
-    /// A custom initializer to create a User from a Firebase Auth user object.
-    /// This is used by the SessionManager when the auth state changes.
-    init(from authUser: FirebaseAuth.User) {
+    /// Creates a User object from a Firebase Auth user. Used by the SessionManager.
+    init(authUser: FirebaseAuth.User) {
         self.uid = authUser.uid
         self.email = authUser.email
         self.name = authUser.displayName ?? ""
-        self.username = "@\(authUser.displayName?.lowercased().filter { !$0.isWhitespace } ?? "newuser")"
+        self.username = nil // This will be fetched from Firestore.
         self.bio = ""
         self.avatarURL = authUser.photoURL?.absoluteString
-        self.stats = Stats(roomsCompleted: 0, totalDays: 0, currentStreak: 0)
+        self.stats = nil // The full stats must be fetched from Firestore.
     }
     
-    /// A custom initializer to create a new User object after sign-up.
-    /// This is used by the AuthenticationViewModel.
+    /// Creates a new, partial User object after initial sign-up. Used by AuthenticationViewModel.
     init(uid: String, email: String?, name: String) {
         self.uid = uid
         self.email = email
         self.name = name
-        self.username = "@\(name.lowercased().filter { !$0.isWhitespace })"
+        self.username = nil // Username is set in the next step.
         self.bio = ""
         self.avatarURL = nil
+        // A new user starts with default stats.
         self.stats = Stats(roomsCompleted: 0, totalDays: 0, currentStreak: 0)
     }
     
     // MARK: - Coding Keys
     
     enum CodingKeys: String, CodingKey {
-        case id
-        case uid
-        case email
-        case name
-        case username
-        case bio
+        case id, uid, email, name, username, bio, stats
         case avatarURL = "avatar_url"
-        case stats
     }
 }
 
 // MARK: - Mock Data
 extension User {
-    static let mock = User(
-        uid: "mock_user_123",
-        email: "alexj@example.com",
-        name: "Alex Johnson"
-    )
+    /// A mock user for previews and testing.
+    static let mock: User = {
+        var user = User(uid: "mock_user_123", email: "alexj@example.com", name: "Alex Johnson")
+        user.username = "@alexj"
+        user.bio = "Building better habits one day at a time 💪"
+        user.stats = Stats(roomsCompleted: 12, totalDays: 847, currentStreak: 23)
+        return user
+    }()
 }

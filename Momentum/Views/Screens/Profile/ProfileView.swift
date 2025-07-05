@@ -1,11 +1,19 @@
 import SwiftUI
+import FirebaseAuth
 
 struct ProfileView: View {
     
     // MARK: - Properties
     
-    @StateObject var viewModel: ProfileViewModel
-    @State private var showSettings = false // State to control the presentation of the Settings sheet.
+    @EnvironmentObject private var sessionManager: SessionManager
+    @StateObject private var viewModel: ProfileViewModel
+    
+    // MARK: - Init
+    
+    init() {
+        let uid = Auth.auth().currentUser?.uid ?? ""
+        _viewModel = StateObject(wrappedValue: ProfileViewModel(userUID: uid))
+    }
     
     // MARK: - Body
     
@@ -18,7 +26,8 @@ struct ProfileView: View {
                     ScrollView {
                         VStack(spacing: 24) {
                             profileHeader(for: user)
-                            statsSection(for: user.stats)
+                            // We now safely unwrap the stats or provide default values.
+                            statsSection(for: user.stats ?? .init(roomsCompleted: 0, totalDays: 0, currentStreak: 0))
                             accomplishmentsSection
                         }
                     }
@@ -27,9 +36,11 @@ struct ProfileView: View {
                 }
             }
             .toolbar { navigationToolbar }
-            // The .sheet modifier presents the SettingsView when showSettings is true.
-            .sheet(isPresented: $showSettings) {
-                SettingsView()
+            .onAppear {
+                Task {
+                    await viewModel.fetchUserProfile()
+                    viewModel.loadAccomplishments()
+                }
             }
         }
     }
@@ -48,7 +59,7 @@ struct ProfileView: View {
                         .font(.title2).bold()
                         .foregroundColor(.appTextPrimary)
                     
-                    Text(user.username)
+                    Text(user.username ?? "No username")
                         .font(.subheadline)
                         .foregroundColor(.appTextSecondary)
                     
@@ -117,10 +128,7 @@ struct ProfileView: View {
         }
         
         ToolbarItem(placement: .navigationBarTrailing) {
-            // This button now toggles the state variable to show the sheet.
-            Button(action: {
-                showSettings.toggle()
-            }) {
+            NavigationLink(destination: SettingsView()) {
                 Image(systemName: "gearshape.fill")
                     .foregroundColor(.appTextSecondary)
             }
@@ -130,6 +138,6 @@ struct ProfileView: View {
 
 // MARK: - Previews
 #Preview {
-    ProfileView(viewModel: ProfileViewModel(user: User.mock))
+    ProfileView()
         .environmentObject(SessionManager())
 }
