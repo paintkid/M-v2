@@ -4,15 +4,14 @@ struct ContentView: View {
     
     // MARK: - Properties
     
-    /// ContentView now receives the single SessionManager instance from the environment.
     @EnvironmentObject private var sessionManager: SessionManager
     
     // MARK: - Body
     
     var body: some View {
-        // This logic is now much simpler and more reliable.
-        // We directly check the state of the environment object.
-        if sessionManager.currentUser != nil {
+        // Corrected: The logic now checks for the presence of a userUID,
+        // which matches the updated SessionManager.
+        if sessionManager.userUID != nil {
             AppTabView()
         } else {
             WelcomeView()

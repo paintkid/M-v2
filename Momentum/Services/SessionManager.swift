@@ -2,12 +2,13 @@ import Foundation
 import FirebaseAuth
 import Combine
 
-/// Manages the user's authentication state and session across the app.
+/// Manages the user's authentication state (UID) and session across the app.
 final class SessionManager: ObservableObject {
     
     // MARK: - Published Properties
     
-    @Published private(set) var currentUser: User?
+    /// The unique identifier of the currently authenticated user.
+    @Published private(set) var userUID: String?
     
     // MARK: - Properties
     
@@ -16,6 +17,8 @@ final class SessionManager: ObservableObject {
     // MARK: - Init
     
     init() {
+        // When the app starts, immediately set the UID if a user is already logged in.
+        self.userUID = Auth.auth().currentUser?.uid
         addAuthStateListener()
     }
     
@@ -35,13 +38,14 @@ final class SessionManager: ObservableObject {
     private func addAuthStateListener() {
         authStateHandler = Auth.auth().addStateDidChangeListener { [weak self] _, firebaseUser in
             DispatchQueue.main.async {
-                if let firebaseUser = firebaseUser {
-                    // This now uses the correct, explicit initializer from the User model.
-                    self?.currentUser = User(from: firebaseUser)
-                    print("SessionManager: User is signed in on main thread with UID: \(firebaseUser.uid)")
+                // This is the core architectural change. We only store the UID.
+                // The full user profile will be fetched from Firestore by the ProfileView.
+                self?.userUID = firebaseUser?.uid
+                
+                if let uid = firebaseUser?.uid {
+                    print("SessionManager: User is signed in with UID: \(uid)")
                 } else {
-                    self?.currentUser = nil
-                    print("SessionManager: User is signed out on main thread.")
+                    print("SessionManager: User is signed out.")
                 }
             }
         }

@@ -25,7 +25,9 @@ struct AppTabView: View {
                     Label("Notifications", systemImage: "bell.fill")
                 }
             
-            ProfileView(viewModel: ProfileViewModel(user: sessionManager.currentUser))
+            // Corrected: The ProfileView now takes no arguments.
+            // It manages its own state by creating its own ViewModel.
+            ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
