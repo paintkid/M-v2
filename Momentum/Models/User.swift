@@ -11,12 +11,9 @@ struct User: Identifiable, Codable {
     let uid: String
     let email: String?
     var name: String
-    var username: String?
+    var username: String? // Corrected: Username is now optional.
     var bio: String
     var avatarURL: String?
-    
-    // Corrected: The stats property is now optional to handle cases where
-    // it might not exist in older Firestore documents, preventing crashes.
     var stats: Stats?
     
     // MARK: - Nested Types
@@ -34,13 +31,13 @@ struct User: Identifiable, Codable {
         self.uid = authUser.uid
         self.email = authUser.email
         self.name = authUser.displayName ?? ""
-        self.username = nil // This will be fetched from Firestore.
+        self.username = nil // The full profile must be fetched from Firestore.
         self.bio = ""
         self.avatarURL = authUser.photoURL?.absoluteString
-        self.stats = nil // The full stats must be fetched from Firestore.
+        self.stats = nil
     }
     
-    /// Creates a new, partial User object after initial sign-up. Used by AuthenticationViewModel.
+    /// Creates a new, partial User object after initial sign-up.
     init(uid: String, email: String?, name: String) {
         self.uid = uid
         self.email = email
@@ -48,7 +45,6 @@ struct User: Identifiable, Codable {
         self.username = nil // Username is set in the next step.
         self.bio = ""
         self.avatarURL = nil
-        // A new user starts with default stats.
         self.stats = Stats(roomsCompleted: 0, totalDays: 0, currentStreak: 0)
     }
     

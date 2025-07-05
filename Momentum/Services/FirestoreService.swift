@@ -30,7 +30,27 @@ final class FirestoreService {
     /// - Returns: The decoded User object.
     func fetchUser(withID uid: String) async throws -> User {
         let userRef = db.collection("users").document(uid)
-        // The getDocument(as:) method is now part of the main FirebaseFirestore library.
         return try await userRef.getDocument(as: User.self)
+    }
+    
+    /// Checks if a given username is already in use.
+    /// - Parameter username: The username to check.
+    /// - Throws: An error if the query fails.
+    /// - Returns: A boolean indicating if the username is available (`true`) or taken (`false`).
+    func checkUsernameAvailability(username: String) async throws -> Bool {
+        let query = db.collection("users").whereField("username", isEqualTo: username)
+        let snapshot = try await query.getDocuments()
+        return snapshot.documents.isEmpty
+    }
+    
+    /// Updates the username for a specific user document.
+    /// - Parameters:
+    ///   - uid: The unique ID of the user to update.
+    ///   - username: The new, unique username to set.
+    /// - Throws: An error if the update fails.
+    func updateUsername(forUID uid: String, to username: String) async throws {
+        let userRef = db.collection("users").document(uid)
+        try await userRef.updateData(["username": username])
+        print("Successfully updated username for UID: \(uid)")
     }
 }

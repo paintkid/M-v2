@@ -1,14 +1,5 @@
-//
-//  SignUpView.swift
-//  Momentum
-//
-//  Created by joel on 7/3/25.
-//
-
-
-// Views/Screens/Authentication/SignUpView.swift
-
 import SwiftUI
+import FirebaseAuth
 
 struct SignUpView: View {
     
@@ -17,6 +8,9 @@ struct SignUpView: View {
     @StateObject private var viewModel = AuthenticationViewModel()
     @Environment(\.dismiss) private var dismiss
     
+    // This state will be triggered upon successful sign-up to show the next screen.
+    @State private var didSignUpSuccessfully = false
+    
     // MARK: - Body
     
     var body: some View {
@@ -24,9 +18,9 @@ struct SignUpView: View {
             Color.appBackground.ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: 20) {
                     header
-                        .padding(.bottom, 32)
+                        .padding(.bottom, 12)
                     
                     emailForm
                     
@@ -35,9 +29,21 @@ struct SignUpView: View {
                 .padding()
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar { navigationToolbar }
         .overlay(loadingOverlay)
+        // This is the key change: This modifier listens to our state variable
+        // and pushes the CreateUsernameView onto the stack when it becomes true.
+        .navigationDestination(isPresented: $didSignUpSuccessfully) {
+            // We create a user object to pass to the next screen.
+            let user = User(
+                uid: Auth.auth().currentUser?.uid ?? "",
+                email: viewModel.email,
+                name: viewModel.name
+            )
+            CreateUsernameView(user: user)
+        }
     }
     
     // MARK: - Private Views
@@ -57,34 +63,10 @@ struct SignUpView: View {
     
     private var emailForm: some View {
         VStack(spacing: 16) {
-            IconTextField(
-                iconName: "person.fill",
-                placeholder: "Full Name",
-                text: $viewModel.name
-            )
-            .textContentType(.name)
-            
-            IconTextField(
-                iconName: "envelope.fill",
-                placeholder: "Email",
-                text: $viewModel.email
-            )
-            .keyboardType(.emailAddress)
-            .textContentType(.emailAddress)
-            
-            SecureIconTextField(
-                iconName: "lock.fill",
-                placeholder: "Password",
-                text: $viewModel.password
-            )
-            .textContentType(.newPassword)
-            
-            SecureIconTextField(
-                iconName: "lock.fill",
-                placeholder: "Confirm Password",
-                text: $viewModel.confirmPassword
-            )
-            .textContentType(.newPassword)
+            IconTextField(iconName: "person.fill", placeholder: "Full Name", text: $viewModel.name)
+            IconTextField(iconName: "envelope.fill", placeholder: "Email", text: $viewModel.email)
+            SecureIconTextField(iconName: "lock.fill", placeholder: "Password", text: $viewModel.password)
+            SecureIconTextField(iconName: "lock.fill", placeholder: "Confirm Password", text: $viewModel.confirmPassword)
             
             if let error = viewModel.error {
                 Text(error)
@@ -93,11 +75,10 @@ struct SignUpView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            termsToggle
-                .padding(.top)
+            termsToggle.padding(.top)
             
             Button(action: handleSignUp) {
-                Text("Create Account")
+                Text("Continue")
             }
             .buttonStyle(PrimaryButtonStyle(isDisabled: !viewModel.isSignUpFormValid))
             .disabled(!viewModel.isSignUpFormValid)
@@ -112,18 +93,9 @@ struct SignUpView: View {
                     .font(.title2)
                     .foregroundColor(viewModel.acceptsTerms ? .appPurple : .appTextTertiary)
             }
-            
-            (
-                Text("I agree to the ")
-                +
-                Text("Terms of Service").foregroundColor(.appPurple)
-                +
-                Text(" and ")
-                +
-                Text("Privacy Policy").foregroundColor(.appPurple)
-            )
-            .font(.footnote)
-            .foregroundColor(.appTextSecondary)
+            (Text("I agree to the ") + Text("Terms of Service").foregroundColor(.appPurple) + Text(" and ") + Text("Privacy Policy").foregroundColor(.appPurple))
+                .font(.footnote)
+                .foregroundColor(.appTextSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -155,8 +127,7 @@ struct SignUpView: View {
         Task {
             let success = await viewModel.signUp()
             if success {
-                // TODO: Dismiss auth flow and show main app content
-                print("Sign up successful")
+                self.didSignUpSuccessfully = true
             }
         }
     }
