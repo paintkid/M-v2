@@ -1,7 +1,6 @@
-// Views/Screens/DiscoveryFeedView.swift
-
 import SwiftUI
 
+/// A screen that displays a feed of success stories from the community.
 struct DiscoveryFeedView: View {
     
     // MARK: - Properties
@@ -28,8 +27,9 @@ struct DiscoveryFeedView: View {
                             }
                         }
                     }
+                    // Corrected: Added bottom padding to create space above the tab bar.
                     .padding(.horizontal)
-                    .padding(.top)
+                    .padding(.vertical)
                 }
             }
         }

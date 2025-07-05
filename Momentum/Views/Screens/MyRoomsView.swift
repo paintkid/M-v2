@@ -28,8 +28,9 @@ struct MyRoomsView: View {
                                     }
                                 }
                             }
+                            // Corrected: Added vertical padding for consistent spacing.
                             .padding(.horizontal)
-                            .padding(.top)
+                            .padding(.vertical)
                         }
                     }
                 }
@@ -49,7 +50,7 @@ struct MyRoomsView: View {
                 Spacer()
                 
                 Button(action: {
-                    // TODO: Present CreateRoomView modally.
+                    // TODO: Present CreateRoomView modally
                     print("Create room tapped")
                 }) {
                     Image(systemName: "plus")

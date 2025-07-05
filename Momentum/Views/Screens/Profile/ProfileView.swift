@@ -26,10 +26,11 @@ struct ProfileView: View {
                     ScrollView {
                         VStack(spacing: 24) {
                             profileHeader(for: user)
-                            // We now safely unwrap the stats or provide default values.
                             statsSection(for: user.stats ?? .init(roomsCompleted: 0, totalDays: 0, currentStreak: 0))
                             accomplishmentsSection
                         }
+                        // Corrected: Added padding to the ScrollView's content.
+                        .padding(.vertical)
                     }
                 } else {
                     ProgressView()
@@ -83,7 +84,7 @@ struct ProfileView: View {
             }
             .buttonStyle(SecondaryButtonStyle())
         }
-        .padding()
+        .padding(.horizontal)
     }
     
     private func statsSection(for stats: User.Stats) -> some View {
