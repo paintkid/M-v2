@@ -1,3 +1,4 @@
+
 import SwiftUI
 
 struct SettingsView: View {
@@ -22,8 +23,6 @@ struct SettingsView: View {
                     appPreferencesSection
                     supportSection
                     signOutSection
-                    
-                    appInfoFooter
                 }
                 .listStyle(.insetGrouped)
                 .background(Color.appBackground)
@@ -95,15 +94,20 @@ struct SettingsView: View {
     }
     
     private var signOutSection: some View {
+        // Corrected: The footer is now attached directly to the last section.
         Section {
             Button(action: {
                 viewModel.signOut(sessionManager: sessionManager)
             }) {
                 SettingRowView(item: .init(iconName: "rectangle.portrait.and.arrow.right", title: "Sign Out", showsChevron: false, isDestructive: true))
             }
+        } footer: {
+            appInfoFooter
         }
     }
     
+    // Corrected: The footer is now a simple ViewBuilder that doesn't need special modifiers.
+    @ViewBuilder
     private var appInfoFooter: some View {
         VStack {
             Text("Momentum")
@@ -114,7 +118,7 @@ struct SettingsView: View {
                 .foregroundColor(.appTextTertiary)
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        .listRowBackground(Color.clear)
+        .padding(.top, 20)
     }
     
     @ToolbarContentBuilder
