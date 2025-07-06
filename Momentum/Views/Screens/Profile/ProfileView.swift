@@ -22,21 +22,25 @@ struct ProfileView: View {
             ZStack {
                 Color.appBackground.ignoresSafeArea()
                 
-                if let user = viewModel.user {
+                VStack(spacing: 0) {
+                    // This new header is now fixed at the top and matches the other screens.
+                    header
+                    
                     ScrollView {
-                        VStack(spacing: 24) {
-                            profileHeader(for: user)
-                            statsSection(for: user.stats ?? .init(roomsCompleted: 0, totalDays: 0, currentStreak: 0))
-                            accomplishmentsSection
+                        if let user = viewModel.user {
+                            VStack(spacing: 24) {
+                                profileDetails(for: user)
+                                statsSection(for: user.stats ?? .init(roomsCompleted: 0, totalDays: 0, currentStreak: 0))
+                                accomplishmentsSection
+                            }
+                            .padding(.vertical)
+                        } else {
+                            ProgressView()
+                                .frame(maxHeight: .infinity)
                         }
-                        // Corrected: Added padding to the ScrollView's content.
-                        .padding(.vertical)
                     }
-                } else {
-                    ProgressView()
                 }
             }
-            .toolbar { navigationToolbar }
             .onAppear {
                 Task {
                     await viewModel.fetchUserProfile()
@@ -48,7 +52,25 @@ struct ProfileView: View {
     
     // MARK: - Private Views
     
-    private func profileHeader(for user: User) -> some View {
+    private var header: some View {
+        HStack(alignment: .center) {
+            Text("Profile")
+                .font(.title2).bold()
+                .foregroundColor(.appTextPrimary)
+            
+            Spacer()
+            
+            NavigationLink(destination: SettingsView()) {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(.appTextSecondary)
+            }
+        }
+        .padding()
+        .background(Color.appBackground)
+    }
+    
+    private func profileDetails(for user: User) -> some View {
         VStack(spacing: 16) {
             HStack(alignment: .top, spacing: 16) {
                 Image(systemName: "person.crop.circle.fill")
@@ -117,22 +139,6 @@ struct ProfileView: View {
                 }
             }
             .padding(.horizontal)
-        }
-    }
-    
-    @ToolbarContentBuilder
-    private var navigationToolbar: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Text("Profile")
-                .font(.largeTitle).bold()
-                .foregroundColor(.appTextPrimary)
-        }
-        
-        ToolbarItem(placement: .navigationBarTrailing) {
-            NavigationLink(destination: SettingsView()) {
-                Image(systemName: "gearshape.fill")
-                    .foregroundColor(.appTextSecondary)
-            }
         }
     }
 }

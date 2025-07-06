@@ -1,8 +1,6 @@
-// Views/Screens/NotificationsView.swift
-
 import SwiftUI
 
-/// A screen that displays a list of user notifications with a modern, seamless style.
+/// A screen that displays a list of user notifications.
 struct NotificationsView: View {
     
     // MARK: - Properties
@@ -16,6 +14,7 @@ struct NotificationsView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
+                // This header now matches the style of the other main screens.
                 header
                 
                 List {
@@ -29,14 +28,15 @@ struct NotificationsView: View {
                             .onAppear {
                                 viewModel.markAsRead(notificationId: notification.id)
                             }
-                            // Key changes for seamless look:
-                            .listRowInsets(EdgeInsets()) // No default padding.
-                            .listRowSeparatorTint(Color.appBorder) // Themed divider.
-                            .background(Color.appBackground) // Ensure row background matches screen.
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparatorTint(Color.appBorder)
+                            .background(Color.appSecondaryBackground)
                         }
                     }
                 }
                 .listStyle(.plain)
+                .background(Color.appBackground)
+                .scrollContentBackground(.hidden)
                 .refreshable {
                     // TODO: Implement logic to re-fetch notifications from the server.
                     print("Refreshing notifications...")
@@ -49,8 +49,9 @@ struct NotificationsView: View {
     
     private var header: some View {
         VStack(alignment: .leading, spacing: 4) {
+            // Corrected: Font size is now smaller and consistent.
             Text("Notifications")
-                .font(.largeTitle).bold()
+                .font(.title2).bold()
                 .foregroundColor(.appTextPrimary)
             
             Text("Stay updated with your rooms")
@@ -97,12 +98,7 @@ struct NotificationsView: View {
 }
 
 // MARK: - Previews
-#Preview("Light Mode") {
+#Preview {
     NotificationsView()
-        .preferredColorScheme(.light)
-}
-
-#Preview("Dark Mode") {
-    NotificationsView()
-        .preferredColorScheme(.dark)
+        .environmentObject(SessionManager())
 }
