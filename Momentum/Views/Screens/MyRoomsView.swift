@@ -28,7 +28,6 @@ struct MyRoomsView: View {
                                     }
                                 }
                             }
-                            // Corrected: Added vertical padding for consistent spacing.
                             .padding(.horizontal)
                             .padding(.vertical)
                         }
@@ -41,32 +40,32 @@ struct MyRoomsView: View {
     // MARK: - Private Views
     
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text("My Rooms")
-                    .font(.largeTitle).bold()
+                    .font(.title2).bold()
                     .foregroundColor(.appTextPrimary)
                 
-                Spacer()
-                
-                Button(action: {
-                    // TODO: Present CreateRoomView modally
-                    print("Create room tapped")
-                }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 44, height: 44)
-                        .background(Color.appPurple)
-                        .clipShape(Circle())
-                }
+                Text("Your active habit challenges")
+                    .font(.subheadline)
+                    .foregroundColor(.appTextSecondary)
             }
             
-            Text("Your active habit challenges")
-                .font(.subheadline)
-                .foregroundColor(.appTextSecondary)
+            Spacer()
+            
+            Button(action: {
+                // TODO: Present CreateRoomView modally
+                print("Create room tapped")
+            }) {
+                Image(systemName: "plus")
+                    // Corrected: Reduced font size and frame size for a more refined look.
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+                    .frame(width: 36, height: 36)
+                    .background(Color.appPurple)
+                    .clipShape(Circle())
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(Color.appBackground)
     }

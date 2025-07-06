@@ -14,6 +14,7 @@ struct DiscoveryFeedView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
+                // This header is now fixed at the top.
                 header
                 
                 ScrollView {
@@ -27,7 +28,6 @@ struct DiscoveryFeedView: View {
                             }
                         }
                     }
-                    // Corrected: Added bottom padding to create space above the tab bar.
                     .padding(.horizontal)
                     .padding(.vertical)
                 }
@@ -39,8 +39,9 @@ struct DiscoveryFeedView: View {
     
     private var header: some View {
         VStack(alignment: .leading, spacing: 4) {
+            // Corrected: Font size is now smaller and consistent.
             Text("Discovery")
-                .font(.largeTitle).bold()
+                .font(.title2).bold()
                 .foregroundColor(.appTextPrimary)
             
             Text("Success stories from our community")
