@@ -8,7 +8,6 @@ struct SignUpView: View {
     @StateObject private var viewModel = AuthenticationViewModel()
     @Environment(\.dismiss) private var dismiss
     
-    // This state will be triggered upon successful sign-up to show the next screen.
     @State private var didSignUpSuccessfully = false
     
     // MARK: - Body
@@ -19,30 +18,27 @@ struct SignUpView: View {
             
             ScrollView {
                 VStack(spacing: 20) {
-                    header
-                        .padding(.bottom, 12)
-                    
+                    header.padding(.bottom, 12)
                     emailForm
-                    
                     Spacer()
                 }
                 .padding()
             }
         }
+        .navigationTitle("Create Account")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar { navigationToolbar }
         .overlay(loadingOverlay)
-        // This is the key change: This modifier listens to our state variable
-        // and pushes the CreateUsernameView onto the stack when it becomes true.
         .navigationDestination(isPresented: $didSignUpSuccessfully) {
-            // We create a user object to pass to the next screen.
             let user = User(
                 uid: Auth.auth().currentUser?.uid ?? "",
                 email: viewModel.email,
                 name: viewModel.name
             )
-            CreateUsernameView(user: user)
+            // Corrected: We now correctly inject a new ViewModel instance
+            // into the CreateUsernameView, matching its new initializer.
+            CreateUsernameView(viewModel: CreateUsernameViewModel(), user: user)
         }
     }
     
@@ -50,13 +46,8 @@ struct SignUpView: View {
     
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Create Account")
-                .font(.largeTitle).bold()
-                .foregroundColor(.appTextPrimary)
-            
-            Text("Start building better habits with friends.")
-                .font(.subheadline)
-                .foregroundColor(.appTextSecondary)
+            Text("Create Account").font(.largeTitle).bold().foregroundColor(.appTextPrimary)
+            Text("Start building better habits with friends.").font(.subheadline).foregroundColor(.appTextSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -69,10 +60,7 @@ struct SignUpView: View {
             SecureIconTextField(iconName: "lock.fill", placeholder: "Confirm Password", text: $viewModel.confirmPassword)
             
             if let error = viewModel.error {
-                Text(error)
-                    .font(.caption)
-                    .foregroundColor(.red)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text(error).font(.caption).foregroundColor(.red).frame(maxWidth: .infinity, alignment: .leading)
             }
             
             termsToggle.padding(.top)
@@ -94,8 +82,7 @@ struct SignUpView: View {
                     .foregroundColor(viewModel.acceptsTerms ? .appPurple : .appTextTertiary)
             }
             (Text("I agree to the ") + Text("Terms of Service").foregroundColor(.appPurple) + Text(" and ") + Text("Privacy Policy").foregroundColor(.appPurple))
-                .font(.footnote)
-                .foregroundColor(.appTextSecondary)
+                .font(.footnote).foregroundColor(.appTextSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -106,8 +93,7 @@ struct SignUpView: View {
             ZStack {
                 Color(white: 0, opacity: 0.75)
                 ProgressView().tint(.white)
-            }
-            .ignoresSafeArea()
+            }.ignoresSafeArea()
         }
     }
     

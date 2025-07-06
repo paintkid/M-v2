@@ -4,7 +4,8 @@ struct CreateUsernameView: View {
     
     // MARK: - Properties
     
-    @StateObject private var viewModel = CreateUsernameViewModel()
+    // Changed to @ObservedObject to allow injection for previews
+    @ObservedObject var viewModel: CreateUsernameViewModel
     @EnvironmentObject private var sessionManager: SessionManager
     let user: User
     
@@ -104,8 +105,6 @@ struct CreateUsernameView: View {
         Task {
             let success = await viewModel.completeProfileCreation(forUID: user.uid)
             if success {
-                // The SessionManager will detect the updated user and the root
-                // ContentView will automatically switch to the main app.
                 print("Username set successfully. Onboarding complete.")
             }
         }
@@ -114,41 +113,16 @@ struct CreateUsernameView: View {
 
 // MARK: - Previews
 #Preview("Available") {
-    // This is the corrected preview block.
-    // We create a view model instance specifically for the preview.
-    let previewViewModel: CreateUsernameViewModel = {
-        let vm = CreateUsernameViewModel()
-        vm.username = "joelkim"
-        vm.validationState = .available // We force its state to be "available".
-        return vm
-    }()
-    
-    // We can now inject this mock view model into our view.
-    // Note: This only works if we change the @StateObject to @ObservedObject
-    // for the preview, or by creating a new init for the view.
-    // A simpler way is to just show the view as is, but this crash
-    // indicates a deeper issue with Firebase in previews.
-    
-    // The simplest fix that will work is to show the view in a container
-    // that doesn't immediately trigger the network call.
-    
-    return CreateUsernameView(user: User.mock)
+    // Corrected: We now create a mock ViewModel and inject it into the view.
+    let vm = CreateUsernameViewModel()
+    vm.validationState = .available
+    return CreateUsernameView(viewModel: vm, user: User.mock)
         .environmentObject(SessionManager())
 }
 
 #Preview("Unavailable") {
-    // We can create multiple previews for different states.
-    let previewViewModel: CreateUsernameViewModel = {
-        let vm = CreateUsernameViewModel()
-        vm.username = "takenuser"
-        vm.validationState = .unavailable("Username is already taken.")
-        return vm
-    }()
-    
-    // For this preview to work correctly with the current view structure,
-    // we would need to modify the view's init to accept a view model.
-    // However, the core issue is Firebase in previews.
-    
-    return CreateUsernameView(user: User.mock)
+    let vm = CreateUsernameViewModel()
+    vm.validationState = .unavailable("Username is already taken.")
+    return CreateUsernameView(viewModel: vm, user: User.mock)
         .environmentObject(SessionManager())
 }
