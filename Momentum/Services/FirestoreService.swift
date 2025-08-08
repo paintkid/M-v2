@@ -53,4 +53,14 @@ final class FirestoreService {
         try await userRef.updateData(["username": username])
         print("Successfully updated username for UID: \(uid)")
     }
+    
+    /// Updates a user's document with the provided data.
+    /// - Parameters:
+    ///   - uid: The unique ID of the user to update.
+    ///   - data: A dictionary containing the fields to update.
+    /// - Throws: An error if the update fails.
+    func updateUserDocument(uid: String, data: [String: Any]) async throws {
+        let userRef = db.collection("users").document(uid)
+        try await userRef.updateData(data)
+    }
 }

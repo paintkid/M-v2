@@ -23,7 +23,6 @@ struct ProfileView: View {
                 Color.appBackground.ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // This new header is now fixed at the top and matches the other screens.
                     header
                     
                     ScrollView {
