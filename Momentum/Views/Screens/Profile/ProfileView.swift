@@ -22,24 +22,20 @@ struct ProfileView: View {
             ZStack {
                 Color.appBackground.ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    header
-                    
+                if let user = viewModel.user {
                     ScrollView {
-                        if let user = viewModel.user {
-                            VStack(spacing: 24) {
-                                profileDetails(for: user)
-                                statsSection(for: user.stats ?? .init(roomsCompleted: 0, totalDays: 0, currentStreak: 0))
-                                accomplishmentsSection
-                            }
-                            .padding(.vertical)
-                        } else {
-                            ProgressView()
-                                .frame(maxHeight: .infinity)
+                        VStack(spacing: 24) {
+                            profileHeader(for: user)
+                            statsSection(for: user.stats ?? .init(roomsCompleted: 0, totalDays: 0, currentStreak: 0))
+                            accomplishmentsSection
                         }
+                        .padding(.vertical)
                     }
+                } else {
+                    ProgressView()
                 }
             }
+            .toolbar { navigationToolbar }
             .onAppear {
                 Task {
                     await viewModel.fetchUserProfile()
@@ -51,25 +47,7 @@ struct ProfileView: View {
     
     // MARK: - Private Views
     
-    private var header: some View {
-        HStack(alignment: .center) {
-            Text("Profile")
-                .font(.title2).bold()
-                .foregroundColor(.appTextPrimary)
-            
-            Spacer()
-            
-            NavigationLink(destination: SettingsView()) {
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 22))
-                    .foregroundColor(.appTextSecondary)
-            }
-        }
-        .padding()
-        .background(Color.appBackground)
-    }
-    
-    private func profileDetails(for user: User) -> some View {
+    private func profileHeader(for user: User) -> some View {
         VStack(spacing: 16) {
             HStack(alignment: .top, spacing: 16) {
                 Image(systemName: "person.crop.circle.fill")
@@ -93,9 +71,8 @@ struct ProfileView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            Button(action: {
-                // TODO: Navigate to Edit Profile screen
-            }) {
+            // Corrected: This is now a NavigationLink to the EditProfileView.
+            NavigationLink(destination: EditProfileView(user: user)) {
                 HStack(spacing: 8) {
                     Image(systemName: "pencil")
                     Text("Edit Profile")
@@ -138,6 +115,22 @@ struct ProfileView: View {
                 }
             }
             .padding(.horizontal)
+        }
+    }
+    
+    @ToolbarContentBuilder
+    private var navigationToolbar: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            Text("Profile")
+                .font(.largeTitle).bold()
+                .foregroundColor(.appTextPrimary)
+        }
+        
+        ToolbarItem(placement: .navigationBarTrailing) {
+            NavigationLink(destination: SettingsView()) {
+                Image(systemName: "gearshape.fill")
+                    .foregroundColor(.appTextSecondary)
+            }
         }
     }
 }
